@@ -2,5 +2,5 @@ venv
 .pdm-python
 .vscode
 
-main.yml
+main.playbook.yml
 inventory.yml
