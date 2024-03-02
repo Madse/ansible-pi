@@ -10,7 +10,7 @@
   become: true
 
 - name: Setup swap
-  shell: dphys-swapfile setup   
+  shell: dphys-swapfile setup
   become: true
 
 - name: Enable swap

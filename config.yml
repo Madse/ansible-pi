@@ -1,0 +1,51 @@
+
+initial_setup:
+  enabled: true
+  packages:
+    - bash-completion
+    - git
+    - htop
+    - jq
+    - python3
+    - gzip
+    - tar
+    - vim
+    - curl
+    - sysbench
+  autoclean: true
+  cron:
+    enabled: true
+git_setup:
+  enabled: true
+  user: themadse
+  email: themadse@gmail.com
+  editor: vim
+  init:
+    defaultBranch: "main"
+  aliases:
+    br: 'branch'
+    bra: 'branch -a'
+    ci: 'commit'
+    cm: 'commit -m'
+    co: 'checkout'
+    cob: 'checkout -b'
+    d: 'diff'
+    dv: 'difftool -t vimdiff -y'
+    fa: 'fetch --prune --all --verbose'
+    gl: 'config --global -l'
+    last: 'log -1 HEAD --stat'
+    lg: '!git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30'
+    ll: 'log --oneline'
+    p: 'push'
+    rv: 'remote -v'
+    s: 'status'
+    sa: 'add'
+    se: '!git rev-list --all | xargs git grep -F'
+    sr: 'restore'
+    ss: 'status -sb'
+    st: 'stash'
+pyenv_setup:
+  enabled: true
+rclone_setup:
+  enabled: true
+  selfupdate: true

@@ -1,23 +1,76 @@
 - name: Update apt-get repo and cache
   become: true
-  apt: update_cache=yes cache_valid_time=3600
+  ansible.builtin.apt: update_cache=yes cache_valid_time=3600
 
 - name: Upgrade all apt packages
   become: true
-  apt: 
+  ansible.builtin.apt:
     upgrade: dist
 
 - name: Install packages
   become: true
-  apt:
-    pkg:
-      - git
-      - sqlite3
+  ansible.builtin.apt:
+    pkg: "{{ initial_setup.packages }}"
+    clean: true
 
 - name: Crontab - setup update and upgrade
   become: true
-  cron:
+  ansible.builtin.cron:
     name: "Update and upgrade"
+    user: root
     minute: "0"
     hour: "5"
+    weekday: "0"
     job: "apt update -q -y && apt dist-upgrade -q -y"
+    cron_file: ansible_apt-autoupdate
+  when: initial_setup.cron.enabled
+
+- name: Crontab - setup update and upgrade on reboot
+  become: true
+  ansible.builtin.cron:
+    name: "Update and upgrade"
+    special_time: reboot
+    user: root
+    job: "apt update -q -y && apt dist-upgrade -q -y"
+    cron_file: ansible_apt-autoupdate_reboot
+  when: initial_setup.cron.enabled
+
+- name: Add usefull alias for Bash
+  ansible.builtin.blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bash_aliases"
+    block: |
+      alias hg="history | grep "
+      alias ll="ls -la"
+      alias ll="ls -lha --color=auto --group-directories-first"
+      alias ls="ls -F --color=auto --show-control-chars"
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - usefull bash aliases'
+    append_newline: true
+    prepend_newline: true
+    create: yes
+
+- name: Add additional to bashrc - common
+  ansible.builtin.blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    block: |
+
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - bashrc - common'
+    append_newline: true
+    prepend_newline: true
+    create: yes
+
+- name: Add additional to bashrc - cmd history
+  ansible.builtin.blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    block: |
+      # Save timestamp in the history file
+      HISTTIMEFORMAT="%F %T "
+
+      # Don't store duplicates
+      HISTCONTROL=ignoredups
+
+      # Allow "sharing" of history between instances
+      PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - bashrc - cmd history'
+    append_newline: true
+    prepend_newline: true
+    create: yes

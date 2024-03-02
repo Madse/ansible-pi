@@ -1,0 +1,24 @@
+- name: Download rclone install script
+  ansible.builtin.get_url:
+    url: https://rclone.org/install.sh
+    dest: /tmp/install_rclone.sh
+    mode: 0755
+
+- name: Run install script - rclone
+  become: true
+  ansible.builtin.shell: /tmp/install_rclone.sh
+  args:
+   creates: /usr/bin/rclone
+
+- name: Add completion bash - rclone
+  become: true
+  ansible.builtin.shell: >
+    rclone completion bash
+  args:
+    creates: /etc/bash_completion.d/rclone
+
+- name: Update - rclone selfupdate
+  become: true
+  ansible.builtin.shell: >
+    rclone selfupdate
+  when: rclone_setup.selfupdate

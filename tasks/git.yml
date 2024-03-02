@@ -1,17 +1,66 @@
-- name: Setup editor
-  git_config:
+- name: Setup git-editor
+  community.general.git_config:
     name: core.editor
     scope: global
-    value: nano
+    value: "{{ git_setup.editor }}"
 
-- name: Setup email
-  git_config:
+- name: Setup git-email
+  community.general.git_config:
     name: user.email
     scope: global
-    value: "{{ git_user_email }}"
+    value: "{{ git_setup.email }}"
 
-- name: Setup name
-  git_config:
+- name: Setup git username
+  community.general.git_config:
     name: user.name
     scope: global
-    value: "{{ git_user_name }}"
+    value: "{{ git_setup.user }}"
+
+- name: Setup git init
+  community.general.git_config:
+    name: "init.{{ item.key }}"
+    scope: global
+    value: "{{ item.value }}"
+  loop: "{{ git_setup.init | dict2items }}"
+
+- name: Add alias for git on bash and bash-completion
+  ansible.builtin.blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bash_aliases"
+    block: |
+      alias g="git"
+      [ -f /usr/share/bash-completion/completions/git ] && . /usr/share/bash-completion/completions/git && __git_complete g git
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - git-alias and bash-completion'
+    append_newline: true
+    prepend_newline: true
+    create: true
+
+- name: Add git prompt color
+  ansible.builtin.blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    block: |
+      # set color for prompt
+      RED="\[\033[01;31m\]"
+      YELLOW="\[\033[01;33m\]"
+      GREEN="\[\033[01;32m\]"
+      BLUE="\[\033[01;34m\]"
+      NO_COLOR="\[\033[00m\]"
+
+      export GIT_PS1_SHOWDIRTYSTATE=1
+      if [ "$color_prompt" = yes ]; then
+          #PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w $YELLOW\$(parse_git_branch)\[\033[00m\]\$ "
+          PS1="${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:$BLUE\w$YELLOW\$(__git_ps1 ' (%s)')$NO_COLOR\$ "
+      else
+          PS1="${debian_chroot:+($debian_chroot)}\u@\h:\w\$(__git_ps1 '(%s)')\$ "
+      fi
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - bashrc - git prompt color'
+    insertbefore: "^unset color_prompt force_color_prompt$"
+    append_newline: true
+    prepend_newline: true
+    create: yes
+
+- name: Add git-aliases to git-config
+  community.general.git_config:
+    name: "alias.{{ item.key }}"
+    scope: global
+    value: "{{ item.value }}"
+  loop: "{{ git_setup.aliases | dict2items }}"

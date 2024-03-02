@@ -1,6 +1,6 @@
 - name: Install build environment
   become: true
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600
     pkg:
@@ -20,16 +20,19 @@
       - liblzma-dev
 
 - name: Download pyenv install script
-  get_url:
+  ansible.builtin.get_url:
     url: https://pyenv.run
     dest: /tmp/install_pyenv.sh
     mode: 0755
 
 - name: Run install script
-  shell: /tmp/install_pyenv.sh
+  ansible.builtin.shell: /tmp/install_pyenv.sh
+  args:
+    chdir: "{{ ansible_env.HOME }}"
+    creates: "{{ ansible_env.HOME }}/.pyenv"
 
 - name: Add pyenv to .bashrc
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "{{ ansible_env.HOME }}/.bashrc"
     block: |
       export PYENV_ROOT="$HOME/.pyenv"
@@ -39,7 +42,7 @@
     create: yes
 
 - name: Add pyenv to .profile
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "{{ ansible_env.HOME }}/.profile"
     block: |
       export PYENV_ROOT="$HOME/.pyenv"
