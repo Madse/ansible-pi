@@ -8,10 +8,17 @@
       - curl
       - gnupg
 
+#- name: Install docker repo key to apt
+#  become: true
+#  ansible.builtin.apt_key:
+#    url: https://download.docker.com/linux/ubuntu/gpg
+
 - name: Install docker repo key to apt
   become: true
-  ansible.builtin.apt_key:
-    url: https://download.docker.com/linux/debian/gpg
+  ansible.builtin.shell: |
+    install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+    chmod a+r /etc/apt/keyrings/docker.asc
 
 - shell: lsb_release -sc
   register: os_codename
@@ -19,7 +26,7 @@
 - name: Install docker repository to apt
   become: true
   ansible.builtin.apt_repository:
-    repo: deb [arch=arm64] https://download.docker.com/linux/debian "{{ os_codename.stdout }}" stable
+    repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu "{{ os_codename.stdout }}" stable
     state: present
 
 - name: Install docker packages
@@ -32,10 +39,12 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
+  register: install_docker_result
 
 - name: Reboot the machine to make the docker.service start # see: https://bbs.archlinux.org/viewtopic.php?id=267694
   become: true
   reboot:
+  when: install_docker_result.changed is true
 
 - name: Enable docker.service
   become: true
@@ -56,3 +65,17 @@
     name: "{{ ansible_user }}"
     groups: docker
     append: true
+
+- name: Add usefull alias for docker
+  ansible.builtin.blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bash_aliases"
+    block: |
+      alias d="docker"
+      alias docker-compose="docker compose"
+      alias dc="docker compose"
+      complete -F _docker docker-compose dc
+      complete -F _docker docker d
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - usefull bash aliases'
+    append_newline: true
+    prepend_newline: true
+    create: yes
