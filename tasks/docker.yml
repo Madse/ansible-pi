@@ -1,7 +1,6 @@
-
 - name: Install initial packages
   become: true
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     cache_valid_time: 3600
     pkg:
@@ -11,7 +10,7 @@
 
 - name: Install docker repo key to apt
   become: true
-  apt_key:
+  ansible.builtin.apt_key:
     url: https://download.docker.com/linux/debian/gpg
 
 - shell: lsb_release -sc
@@ -19,13 +18,13 @@
 
 - name: Install docker repository to apt
   become: true
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb [arch=arm64] https://download.docker.com/linux/debian "{{ os_codename.stdout }}" stable
     state: present
 
 - name: Install docker packages
   become: true
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     pkg:
       - docker-ce
@@ -40,20 +39,20 @@
 
 - name: Enable docker.service
   become: true
-  service:
+  ansible.builtin.service:
     name: docker
     state: restarted
-    enabled: yes
-    
+    enabled: true
+
 - name: Create "docker" group
   become: true
-  group:
+  ansible.builtin.group:
     name: docker
     state: present
 
 - name: Add user to "docker" group
   become: true
-  user:
+  ansible.builtin.user:
     name: "{{ ansible_user }}"
     groups: docker
-    append: yes
+    append: true

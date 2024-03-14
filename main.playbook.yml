@@ -12,6 +12,10 @@
         file: tasks/initial_setup.yml
       when: initial_setup is defined and initial_setup.enabled
 
+    - name: Copy Assets
+      ansible.builtin.include_tasks:
+        file: tasks/copy_assets.yml
+
     - name: Setup git
       ansible.builtin.include_tasks:
         file: tasks/git.yml
@@ -26,6 +30,12 @@
       ansible.builtin.include_tasks:
         file: tasks/rclone.yml
       when: rclone_setup is defined and rclone_setup.enabled
+
+    - name: Docker
+      ansible.builtin.include_tasks:
+        file: tasks/docker.yml
+      when: docker_setup is defined and docker_setup.enabled
+
 
 #    - name: SWAP
 #      ansible.builtin.include_tasks:

@@ -1,0 +1,4 @@
+- name: Upload assets to remote
+  ansible.builtin.copy:
+    src: ../assets/.vscode
+    dest: ~/

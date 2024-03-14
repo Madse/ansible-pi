@@ -49,3 +49,5 @@ pyenv_setup:
 rclone_setup:
   enabled: true
   selfupdate: true
+docker_setup:
+  enabled: true
