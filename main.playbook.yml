@@ -60,11 +60,6 @@
 #      ansible.builtin.include_tasks:
 #        file: tasks/swap.yml
 #
-
-#
-#    - name: SSH
-#      ansible.builtin.include_tasks:
-#        file: tasks/ssh.yml
 #
 #    - name: ZeroTier
 #      ansible.builtin.include_tasks:
@@ -81,10 +76,8 @@
 #    - name: AirSane
 #      ansible.builtin.include_tasks:
 #        file: tasks/airsane.yml
-#
-#    - name: Docker
-#      ansible.builtin.include_tasks:
-#        file: tasks/docker.yml
+
+
 
 # ========== OPTIONAL ==================
 
