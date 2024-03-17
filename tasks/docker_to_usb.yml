@@ -14,7 +14,7 @@
 
 - name: Mount usb drive
   become: true
-  mount:
+  ansible.builtin.mount:
     path: "{{ usb_mount_path }}"
     src: "UUID={{ uuid.stdout_lines[0] }}"
     state: mounted
@@ -23,10 +23,10 @@
 
 - name: Change docker default directory
   become: true
-  blockinfile:
+  ansible.builtin.blockinfile:
     dest: "/etc/docker/daemon.json"
     block: |
-        "data-root": "{{ usb_mount_path }}/docker" 
+        "data-root": "{{ usb_mount_path }}/docker"
     marker: "{mark}"
     marker_begin: "{"
     marker_end: "}"
@@ -34,6 +34,6 @@
 
 - name: Restart docker.service
   become: true
-  service:
+  ansible.builtin.service:
     name: docker
     state: restarted

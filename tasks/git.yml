@@ -64,3 +64,5 @@
     scope: global
     value: "{{ item.value }}"
   loop: "{{ git_setup.aliases | dict2items }}"
+#  async: 30
+#  poll: 5

@@ -13,20 +13,51 @@
 #  ansible.builtin.apt_key:
 #    url: https://download.docker.com/linux/ubuntu/gpg
 
+- name: prepare codename variable
+  block:
+    - ansible.builtin.shell: lsb_release -sc
+      register: os_codename
+    - set_fact:
+        os_distribution_codename: "{{ os_codename.stdout }}"
+      when: os_distribution_codename is not defined
+
+- name: prepare distribution id variable
+  block:
+    - ansible.builtin.shell: lsb_release -si
+      register: os_id
+    - set_fact:
+        os_distribution_id: "{{ os_id.stdout }}"
+      when: os_distribution_id is not defined
+
+- set_fact:
+    docker_keyring_filename: "docker-keyring-{{ os_distribution_id | lower }}.asc"
+    docker_keyring_path: "/etc/apt/keyrings"
+
+# # Add Docker's official GPG key:
+# sudo apt-get update
+# sudo apt-get install ca-certificates curl
+# sudo install -m 0755 -d /etc/apt/keyrings
+# sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+# sudo chmod a+r /etc/apt/keyrings/docker.asc
+
 - name: Install docker repo key to apt
   become: true
   ansible.builtin.shell: |
-    install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    chmod a+r /etc/apt/keyrings/docker.asc
+    install -m 0755 -d {{ docker_keyring_path }}
+    curl -fsSL "https://download.docker.com/linux/{{ os_distribution_id | lower }}/gpg" -o {{ docker_keyring_path }}/{{ docker_keyring_filename }}
+    chmod a+r {{ docker_keyring_path }}/{{ docker_keyring_filename }}
 
-- shell: lsb_release -sc
-  register: os_codename
+## Add the repository to Apt sources:
+# echo \
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+#   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+#   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# sudo apt-get update
 
 - name: Install docker repository to apt
   become: true
   ansible.builtin.apt_repository:
-    repo: deb [arch=arm64] https://download.docker.com/linux/ubuntu "{{ os_codename.stdout }}" stable
+    repo: "deb [arch=arm64 signed-by={{ docker_keyring_path }}/{{ docker_keyring_filename }}] https://download.docker.com/linux/{{ os_distribution_id | lower }} {{ os_distribution_codename }} {{ docker_setup.repo_stage }}"
     state: present
 
 - name: Install docker packages
@@ -73,9 +104,9 @@
       alias d="docker"
       alias docker-compose="docker compose"
       alias dc="docker compose"
-      complete -F _docker docker-compose dc
-      complete -F _docker docker d
-    marker: '# {mark} ANSIBLE MANAGED BLOCK - usefull bash aliases'
+      #complete -F _docker docker-compose dc
+      #complete -F _docker docker d
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - usefull bash docker aliases'
     append_newline: true
     prepend_newline: true
     create: yes

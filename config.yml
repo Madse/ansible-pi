@@ -51,3 +51,5 @@ rclone_setup:
   selfupdate: true
 docker_setup:
   enabled: true
+  repo_url: "https://download.docker.com/linux"
+  repo_stage: stable

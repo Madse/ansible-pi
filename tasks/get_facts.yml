@@ -1,0 +1,37 @@
+- name: Get Distribution ID
+  block:
+    - ansible.builtin.shell: |
+        lsb_release -is
+      register: result_lsb_release_is_distribution_id
+    - debug:
+        var: result_lsb_release_is_distribution_id
+
+- name: Get Distribution Description
+  block:
+    - ansible.builtin.shell: |
+        lsb_release -ds
+      register: result_lsb_release_ds_distribution_description
+    - debug:
+        var: result_lsb_release_ds_distribution_description
+
+- name: Get Distribution codename
+  block:
+    - ansible.builtin.shell: |
+        lsb_release -cs
+      register: result_lsb_release_cs_distribution_codename
+    - debug:
+        var: result_lsb_release_cs_distribution_codename
+
+- name: Get Distribution release
+  block:
+    - ansible.builtin.shell: |
+        lsb_release -rs
+      register: result_lsb_release_rs_release
+    - debug:
+        var: result_lsb_release_rs_release
+
+- set_fact:
+    os_distribution_id: "{{ result_lsb_release_is_distribution_id.stdout }}"
+    os_distribution_description: "{{ result_lsb_release_ds_distribution_description.stdout }}"
+    os_distribution_codename: "{{ result_lsb_release_cs_distribution_codename.stdout }}"
+    os_distribution_release: "{{ result_lsb_release_rs_release.stdout }}"

@@ -7,6 +7,10 @@
     usb_device_path: "/dev/sda1"
     usb_mount_path: "/media/usb-drive"
   tasks:
+    - name: Get Distribution Facts
+      ansible.builtin.include_tasks:
+        file: tasks/get_facts.yml
+
     - name: Initial setup
       ansible.builtin.include_tasks:
         file: tasks/initial_setup.yml
