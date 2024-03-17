@@ -53,3 +53,17 @@ docker_setup:
   enabled: true
   repo_url: "https://download.docker.com/linux"
   repo_stage: stable
+ssh_setup:
+  enable: true
+  sshd_config : |
+      Protocol 2
+      PasswordAuthentication no
+      PermitEmptyPasswords no
+      PermitRootLogin no
+      MaxAuthTries 3
+generate_ssh_key:
+  enable: false
+  type: ed25519
+swap_setup:
+  enable: false
+  size_mb: 4096mb

@@ -1,0 +1,21 @@
+- name: Generate SSH-Key pair
+  block:
+    - set_fact:
+        ssh_key_filename: "ansible_{{ ansible_user }}_id_{{ generate_ssh_key.type }}"
+
+    - name: Generate the key
+      community.crypto.openssh_keypair:
+        path: "{{ ansible_env.HOME }}/.ssh/{{ ssh_key_filename }}"
+        type: generate_ssh_key.type
+
+    - name: Capture pub key
+      ansible.buildin.shell: cat "{{ ansible_env.HOME }}/.ssh/{{ ssh_key_filename }}.pub"
+      register: ssh_key
+
+    - name: Print pub key
+      debug:
+        msg: "{{ ssh_key.stdout }}"
+
+    - pause:
+        prompt: "Please enter the above ssh public key to GitHub and then press a key"
+        echo: yes

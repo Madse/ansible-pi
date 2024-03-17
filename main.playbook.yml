@@ -16,6 +16,21 @@
         file: tasks/initial_setup.yml
       when: initial_setup is defined and initial_setup.enabled
 
+    - name: Initial sshd setup
+      ansible.builtin.include_tasks:
+        file: tasks/ssh.yml
+      when: ssh_setup is defined and ssh_setup.enabled
+
+    - name: Generate new ssh key
+      ansible.builtin.include_tasks:
+        file: tasks/ssh_key.yml
+      when: generate_ssh_key is defined and generate_ssh_key.enabled
+
+    - name: Generate new ssh key
+      ansible.builtin.include_tasks:
+        file: tasks/swap.yml
+      when: swap_setup is defined and swap_setup.enabled
+
     - name: Copy Assets
       ansible.builtin.include_tasks:
         file: tasks/copy_assets.yml
