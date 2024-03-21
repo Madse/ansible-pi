@@ -16,12 +16,12 @@
     scope: global
     value: "{{ git_setup.user }}"
 
-- name: Setup git init
+- name: Setup git config user global
   community.general.git_config:
-    name: "init.{{ item.key }}"
+    name: "{{ item.key }}"
     scope: global
     value: "{{ item.value }}"
-  loop: "{{ git_setup.init | dict2items }}"
+  loop: "{{ git_setup.global_config | dict2items }}"
 
 - name: Add alias for git on bash and bash-completion
   ansible.builtin.blockinfile:

@@ -20,8 +20,9 @@ git_setup:
   user: themadse
   email: themadse@gmail.com
   editor: vim
-  init:
-    defaultBranch: "main"
+  global_config:
+    init.defaultBranch: "main"
+    pull.rebase: true
   aliases:
     br: 'branch'
     bra: 'branch -a'
