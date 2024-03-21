@@ -26,7 +26,7 @@
         file: tasks/ssh_key.yml
       when: generate_ssh_key is defined and generate_ssh_key.enabled
 
-    - name: Generate new ssh key
+    - name: Setup SWAP
       ansible.builtin.include_tasks:
         file: tasks/swap.yml
       when: swap_setup is defined and swap_setup.enabled
@@ -56,18 +56,9 @@
       when: docker_setup is defined and docker_setup.enabled
 
 
-#    - name: SWAP
-#      ansible.builtin.include_tasks:
-#        file: tasks/swap.yml
-#
-#
 #    - name: ZeroTier
 #      ansible.builtin.include_tasks:
 #        file: tasks/zerotier.yml
-#
-#    - name: pyenv
-#      ansible.builtin.include_tasks:
-#        file: tasks/pyenv.yml
 #
 #    - name: CUPS
 #      ansible.builtin.include_tasks:
