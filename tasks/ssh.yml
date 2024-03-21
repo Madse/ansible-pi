@@ -8,9 +8,18 @@
       insertafter: "^Include /etc/ssh/sshd_config"
       block: |
         {{ ssh_setup.sshd_config }}
-  - name: Restart sshd service
-    become: true
-    service:
-      name: sshd
-      state: restarted
-      enabled: true
+  - name: Restart ssh
+    block:
+      - name: eestart sshd service
+        become: true
+        service:
+          name: sshd
+          state: restarted
+          enabled: true
+      - name: eestart ssh service
+        become: true
+        service:
+          name: ssh
+          state: restarted
+          enabled: true
+    ignore_errors: true
