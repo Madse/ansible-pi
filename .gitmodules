@@ -1,0 +1,3 @@
+[submodule "docker-apps/portainer"]
+	path = assets/docker-apps/portainer
+	url = /home/madse/ws-git/git-madse/ansible-pi/../docker-apps/portainer
