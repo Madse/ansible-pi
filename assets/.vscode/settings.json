@@ -1,0 +1,11 @@
+{
+  "workbench.colorCustomizations": {
+      "titleBar.activeBackground": "#9d063e",
+      "activityBar.background": "#9d063e"
+  },
+  "editor.tabSize": 2,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "terminal.integrated.cursorStyle": "line",
+  "files.eol": "\n"
+}
