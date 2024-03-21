@@ -1,6 +1,10 @@
 venv
+.*
 .pdm-python
-.vscode
+!.vscode
+!.gitignore
+!.gitmodules
+!.gitattributes
 
 main.playbook.yml
 inventory.yml
