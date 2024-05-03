@@ -12,6 +12,7 @@ initial_setup:
     - vim
     - curl
     - sysbench
+    - apache2-utils
   autoclean: true
   cron:
     enabled: true
@@ -23,6 +24,7 @@ git_setup:
   global_config:
     init.defaultBranch: "main"
     pull.rebase: true
+    credential.helper: "cache --timeout=3600"
   aliases:
     br: 'branch'
     bra: 'branch -a'
