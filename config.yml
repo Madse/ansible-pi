@@ -13,6 +13,8 @@ initial_setup:
     - curl
     - sysbench
     - apache2-utils
+    - bat
+    - neovim
   autoclean: true
   cron:
     enabled: true

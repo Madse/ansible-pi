@@ -74,3 +74,22 @@
     append_newline: true
     prepend_newline: true
     create: yes
+
+- name: "Get Installed packages"
+  package_facts:
+    manager: "auto"
+
+- name: "Installed packages"
+  debug:
+    msg: "nsible_facts.packages"
+
+- name: Add usefull alias for Bash - batcat bat
+  ansible.builtin.blockinfile:
+    dest: "{{ ansible_env.HOME }}/.bash_aliases"
+    block: |
+      alias bat="batcat"
+    marker: '# {mark} ANSIBLE MANAGED BLOCK - usefull bash aliases'
+    append_newline: true
+    prepend_newline: true
+    create: yes
+  when: "'bat' in ansible_facts.packages"
